@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+<!-- 让Spring容器管理 test.Student bean  -->
+<bean id="student" class="test.Student">
+    <!-- 依赖注入（setter注入，即通过javabean属性进行注入 -->
+    <property name="name" value="小明"></property>
+    <property name="homework" ref="homework"></property>
+
+    <!-- 依赖注入（constructor-arg注入，即通过构造器参数属性进行注入 -->
+<!--    <constructor-arg name="homework" ref="homework"></constructor-arg>-->
+<!--    <constructor-arg name="name" value="小红"></constructor-arg>-->
+</bean>
+
+<!-- 让Spring管理Homework bean-->
+<bean id="homework" class="test.Homework">
+    <property name="content" value="正在做作业,勿扰..."></property>
+</bean>
+
+<!-- 切面定义-->
+<bean id="checktime" class="test.CheckNowTime"></bean>
+
+<aop:config>
+    <aop:aspect ref="checktime">
+        <aop:pointcut id="dohomework" expression="execution(* *.doHomeWork(..))"/><!--  指明切面（Aspect）的切入点（pointcut），此处为任意的名字为doHomeWork()的方法  -->
+        <aop:before pointcut-ref="dohomework" method="beforDoHomework"></aop:before>
+        <aop:after pointcut-ref="dohomework" method="afterDoHomework"></aop:after>
+        <!-- <aop:before pointcut="execution(* *.doHomeWork(..))" method="beforDoHomework"></aop:before> -->
+    </aop:aspect>
+</aop:config>
+</beans>
+
